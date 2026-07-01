@@ -1,7 +1,7 @@
 :root {
-  --color-primario:       #0077B6;
-  --color-primario-dark:  #005F92;
-  --color-acento:         #00B4D8;
+  --color-primario:       #D32F2F;
+  --color-primario-dark:  #B71C1C;
+  --color-acento:         #F5A623;
   --color-arena:          #F4E4C1;
   --color-arena-dark:     #E8D4A0;
 
@@ -13,8 +13,8 @@
 
   --color-disponible:     #FFFFFF;
   --color-disponible-borde:#D1D5DB;
-  --color-disponible-hover:#EBF8FF;
-  --color-seleccionado:   #0077B6;
+  --color-disponible-hover:#FFF0F0;
+  --color-seleccionado:   #D32F2F;
   --color-seleccionado-txt:#FFFFFF;
   --color-reservado:      #FEF3C7;
   --color-reservado-borde:#F59E0B;
@@ -23,11 +23,15 @@
   --color-pagado-borde:   #EF4444;
   --color-pagado-txt:     #991B1B;
 
+  --color-mantis:         #D32F2F;
+  --color-mantis-dark:    #B71C1C;
+  --color-oro:            #F5A623;
+
   --font-display:         'Playfair Display', Georgia, serif;
   --font-body:            'Inter', system-ui, sans-serif;
 
   --radio-sm:             6px;
   --radio-md:             12px;
   --radio-lg:             20px;
-  --sombra-card:          0 2px 16px rgba(0,119,182,0.08);
+  --sombra-card:          0 2px 16px rgba(211,47,47,0.08);
 }

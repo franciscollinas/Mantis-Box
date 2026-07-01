@@ -5,10 +5,8 @@ function mostrarTiquete({ numero, nombre, telefono, correo, id_confirmacion }) {
 
   tiqueteVisual.innerHTML = `
     <div class="tiquete-header">
-      <img src="https://avadiadelmar.com/wp-content/uploads/2024/11/cropped-LOGO-PNG.png"
-           alt="Logo Avadia del Mar" class="tiquete-logo">
-      <h2>Tiquete de Participación</h2>
-      <p class="tiquete-subtitle">Rifa Oficial — Casa Hotel Avadia del Mar</p>
+      <h2>🎟️ Tiquete de Participación</h2>
+      <p class="tiquete-subtitle">Escuela de Kung Fu Mantis Box · Sabanalarga</p>
     </div>
     <div class="tiquete-numero">
       <span class="label">Tu número</span>
@@ -20,6 +18,9 @@ function mostrarTiquete({ numero, nombre, telefono, correo, id_confirmacion }) {
       <div class="dato"><span class="key">Correo</span><span class="val">${correo}</span></div>
       <div class="dato"><span class="key">ID Confirmación</span><span class="val">${id_confirmacion}</span></div>
     </div>
+    <div class="tiquete-beneficio">
+      🥋 Gracias por apoyar a los estudiantes de la Escuela de Kung Fu Mantis Box
+    </div>
     <div class="tiquete-premio">
       <h3>🏖️ Premio</h3>
       <p><strong>2 noches con desayuno incluido</strong><br>
@@ -28,8 +29,7 @@ function mostrarTiquete({ numero, nombre, telefono, correo, id_confirmacion }) {
     </div>
     <div class="tiquete-footer">
       <p>📱 La confirmación llegará por WhatsApp al número registrado.</p>
-      <p>🌐 <a href="https://avadiadelmar.com/" target="_blank" rel="noopener noreferrer">avadiadelmar.com</a>
-         &nbsp;|&nbsp; 📞 +57 302 6476894</p>
+      <p>🎰 Lotería La Caribeña · Sábado 1 de Agosto de 2026</p>
       <p class="tiquete-legal">Este tiquete es tu constancia de participación. Consérvalo.</p>
     </div>
   `;
@@ -37,6 +37,9 @@ function mostrarTiquete({ numero, nombre, telefono, correo, id_confirmacion }) {
   tiqueteAcciones.innerHTML = `
     <button onclick="descargarTiquete()" class="btn-primario">
       ⬇️ Descargar tiquete (PDF)
+    </button>
+    <button onclick="window.open('https://avadiadelmar.com/','_blank')" class="btn-secundario">
+      🏖️ Ver el premio
     </button>
     <button onclick="compartirWhatsApp('${nombre}','${numero}')" class="btn-whatsapp">
       💬 Compartir por WhatsApp
@@ -61,11 +64,11 @@ async function descargarTiquete() {
 
 function compartirWhatsApp(nombre, numero) {
   const texto = encodeURIComponent(
-    `¡Participé en la rifa del Hotel Avadia del Mar! 🏖️\n` +
+    `🥋 ¡Apoyé a la Escuela de Kung Fu Mantis Box!\n` +
     `Mi número es el *${numero}*\n` +
     `Nombre: ${nombre}\n` +
-    `Premio: 2 noches con desayuno en La Boquilla, Cartagena 🌊\n` +
-    `Más info: https://avadiadelmar.com/`
+    `🏖️ Premio: 2 noches con desayuno en Casa Hotel Avadia del Mar, Cartagena\n` +
+    `Conoce el premio: https://avadiadelmar.com/`
   );
   window.open(`https://wa.me/?text=${texto}`, '_blank');
 }

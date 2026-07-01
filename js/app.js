@@ -8,6 +8,32 @@ const TOTAL_NUMEROS = 100;
 
 let numeroSeleccionado = null;
 
+const FECHA_LIMITE_PAGO = new Date(2026, 6, 15); // 15 de Julio de 2026
+
+function liberarReservadosVencidos() {
+  const ahora = new Date();
+  if (ahora <= FECHA_LIMITE_PAGO) return;
+
+  NUMEROS_REF.once('value').then(snapshot => {
+    const data = snapshot.val();
+    if (!data) return;
+    const updates = {};
+    Object.entries(data).forEach(([key, item]) => {
+      if (item.estado === 'reservado') {
+        updates[key] = {
+          estado: 'disponible',
+          comprador: null,
+          fecha_compra: null,
+          fecha_pago: null
+        };
+      }
+    });
+    if (Object.keys(updates).length > 0) {
+      NUMEROS_REF.update(updates);
+    }
+  });
+}
+
 function inicializarBase() {
   NUMEROS_REF.once('value').then(snapshot => {
     if (!snapshot.exists()) {
@@ -26,7 +52,7 @@ function inicializarBase() {
       CONFIG_REF.set({
         precio_boleta: PRECIO_BOLETA,
         total_boletas: TOTAL_NUMEROS,
-        beneficiario: 'Hotel Avadia del Mar'
+        beneficiario: 'Escuela de Kung Fu Mantis Box de Sabanalarga'
       });
     }
   });
@@ -229,6 +255,7 @@ async function manejarEnvio(event) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  liberarReservadosVencidos();
   inicializarBase();
 
   document.getElementById('btn-comprar').addEventListener('click', abrirModal);
