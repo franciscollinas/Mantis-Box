@@ -195,10 +195,35 @@ function IconWhatsapp({ className = "" }: { className?: string }) {
   );
 }
 
+function SocialLinks({ className = "" }: { className?: string }) {
+  const links = [
+    { href: SITE.instagram, label: "Instagram", Icon: IconInstagram },
+    { href: SITE.facebook, label: "Facebook", Icon: IconFacebook },
+    { href: SITE.tiktok, label: "TikTok", Icon: IconTiktok },
+    { href: SITE.whatsapp, label: "WhatsApp", Icon: IconWhatsapp },
+  ];
+  return (
+    <div className={`flex items-center gap-5 text-primary-foreground/85 ${className}`}>
+      {links.map(({ href, label, Icon }) => (
+        <a
+          key={label}
+          href={href}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={label}
+          className="transition-all duration-300 hover:text-brand hover:scale-110"
+        >
+          <Icon className="h-5 w-5" />
+        </a>
+      ))}
+    </div>
+  );
+}
+
 function Header() {
   return (
     <header className="fixed inset-x-0 top-0 z-40 h-[83px] sm:h-[99px] bg-gradient-to-b from-ink/85 via-ink/45 to-transparent backdrop-blur-sm">
-      <div className="mx-auto grid max-w-[1400px] grid-cols-[1fr_auto_1fr] items-start gap-4 px-6 py-1.5">
+      <div className="mx-auto grid max-w-[1400px] grid-cols-1 items-start gap-4 px-6 py-1.5 md:grid-cols-[1fr_auto_1fr]">
         <nav
           className="hidden items-center gap-7 self-center md:flex"
           aria-label="Navegación principal"
@@ -213,62 +238,27 @@ function Header() {
             </a>
           ))}
         </nav>
-        <div className="md:hidden" />
-        <a
-          href="#inicio"
-          className="mx-auto flex items-center gap-3 transition-all duration-300 hover:scale-110"
-        >
-          <img
-            src={logoAsset}
-            alt="Logo Club Mantis Box Sabanalarga"
-            width={52}
-            height={52}
-            className="h-[110px] w-[110px] sm:h-[132px] sm:w-[132px] object-contain -mb-[27px] sm:-mb-[33px]"
-          />
-          <span className="headline text-[2rem] leading-[1] tracking-wide text-primary-foreground sm:text-[2.5rem]">
-            Mantis
-            <br />
-            Box
-          </span>
-        </a>
-        <div className="flex items-center justify-end gap-5 self-center text-primary-foreground/85">
+        <div className="flex w-full flex-col items-center gap-1.5 md:w-auto">
           <a
-            href={SITE.instagram}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Instagram"
-            className="transition-all duration-300 hover:text-brand hover:scale-110"
+            href="#inicio"
+            className="flex items-center gap-3 transition-all duration-300 hover:scale-110"
           >
-            <IconInstagram className="h-5 w-5" />
+            <img
+              src={logoAsset}
+              alt="Logo Club Mantis Box Sabanalarga"
+              width={52}
+              height={52}
+              className="h-[110px] w-[110px] sm:h-[132px] sm:w-[132px] object-contain -mb-[27px] sm:-mb-[33px]"
+            />
+            <span className="headline text-[2rem] leading-[1] tracking-wide text-primary-foreground sm:text-[2.5rem]">
+              Mantis
+              <br />
+              Box
+            </span>
           </a>
-          <a
-            href={SITE.facebook}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Facebook"
-            className="transition-all duration-300 hover:text-brand hover:scale-110"
-          >
-            <IconFacebook className="h-5 w-5" />
-          </a>
-          <a
-            href={SITE.tiktok}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="TikTok"
-            className="transition-all duration-300 hover:text-brand hover:scale-110"
-          >
-            <IconTiktok className="h-5 w-5" />
-          </a>
-          <a
-            href={SITE.whatsapp}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="WhatsApp"
-            className="transition-all duration-300 hover:text-brand hover:scale-110"
-          >
-            <IconWhatsapp className="h-5 w-5" />
-          </a>
+          <SocialLinks className="mt-8 w-full justify-center md:hidden" />
         </div>
+        <SocialLinks className="hidden self-center justify-end md:flex" />
       </div>
     </header>
   );
