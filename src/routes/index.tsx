@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import kidsImg from "@/assets/program-wushu.jpeg";
 import fundamentalsImg from "@/assets/program-selfdefense.jpeg";
@@ -39,7 +40,7 @@ const SITE = {
   tiktok: "https://www.tiktok.com/@mantisbox",
   facebook: "https://www.facebook.com/profile.php?id=61592859811892",
   // ⚠️ Reemplazar por el enlace directo de reseñas de tu ficha de Google.
-  googleReview: "https://search.google.com/local/writereview?placeid=TU_PLACE_ID",
+  googleReview: "https://search.google.com/local/writereview?placeid=ChIJ16WuWZzf9Y4RdOVCyVuHgak",
   googleProfile: "https://www.google.com/search?q=Club+Mantis+Box+Sabanalarga",
 };
 
@@ -479,6 +480,15 @@ function Schedule() {
 }
 
 function Reviews() {
+  useEffect(() => {
+    // Carga el script de Elfsight solo una vez
+    if (document.querySelector('script[src="https://elfsightcdn.com/platform.js"]')) return;
+    const script = document.createElement("script");
+    script.src = "https://elfsightcdn.com/platform.js";
+    script.async = true;
+    document.head.appendChild(script);
+  }, []);
+
   return (
     <section id="resenas" className="fade-in-up section-pad bg-background">
       <div className="mx-auto max-w-[1200px] px-6 text-center">
@@ -488,29 +498,33 @@ function Reviews() {
         <p className="headline mx-auto mt-4 max-w-4xl text-xl text-foreground sm:text-3xl">
           Escucha a las familias que confían en Mantis Box la formación de sus hijos
         </p>
-        <div className="mt-12 rounded-md border border-border bg-secondary px-6 py-12">
-          <p className="mx-auto max-w-2xl text-[17px] leading-relaxed text-muted-foreground">
-            Los testimonios de nuestros alumnos y de sus papás se publican directamente en nuestra
-            ficha de Google, para que sean reales y verificables por cualquier persona.
-          </p>
-          <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
-            <a
-              href={SITE.googleReview}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-brand px-8 py-4 font-display text-base tracking-wide text-brand-foreground transition-all duration-300 hover:opacity-90 hover:scale-105"
-            >
-              Deja tu reseña en Google
-            </a>
-            <a
-              href={SITE.googleProfile}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="border border-foreground/25 px-8 py-4 font-display text-base tracking-wide transition-colors hover:border-brand hover:text-brand"
-            >
-              Ver reseñas
-            </a>
-          </div>
+
+        {/* Widget de reseñas reales de Google vía Elfsight */}
+        <div className="mt-12">
+          <div
+            className="elfsight-app-5451a4a7-85c2-4a2e-8245-8e83ab958fa9"
+            data-elfsight-app-lazy
+          />
+        </div>
+
+        {/* CTA para dejar nueva reseña */}
+        <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
+          <a
+            href={SITE.googleReview}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bg-brand px-8 py-4 font-display text-base tracking-wide text-brand-foreground transition-all duration-300 hover:opacity-90 hover:scale-105"
+          >
+            Deja tu reseña en Google
+          </a>
+          <a
+            href={SITE.googleProfile}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="border border-foreground/25 px-8 py-4 font-display text-base tracking-wide transition-colors hover:border-brand hover:text-brand"
+          >
+            Ver todas las reseñas
+          </a>
         </div>
       </div>
     </section>
