@@ -603,6 +603,7 @@ function FinalCta() {
 function Contact() {
   const [estado, setEstado] = useState<"idle" | "enviando" | "ok" | "error">("idle");
   const [mensajeError, setMensajeError] = useState("");
+  const [codigo, setCodigo] = useState("");
 
   const enviar = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -624,7 +625,6 @@ function Contact() {
           peso_kg: formData.get("peso") || undefined,
           nombre_acudiente: formData.get("nombre_acudiente"),
           telefono: formData.get("telefono"),
-          email: formData.get("email"),
         }),
       });
       const cuerpo = await res.json().catch(() => ({}));
@@ -633,6 +633,7 @@ function Contact() {
         setEstado("error");
         return;
       }
+      setCodigo(typeof cuerpo.codigo === "string" ? cuerpo.codigo : "");
       setEstado("ok");
       form.reset();
     } catch {
@@ -652,7 +653,7 @@ function Contact() {
             Tu primera clase es <span className="text-brand">gratis</span>
           </h2>
           <p className="mt-5 max-w-md text-primary-foreground/70">
-            Regístrate y el club te contactará para coordinar tu clase de prueba. No necesitas
+            Regístrate y recibirás un código de inscripción para pagar en el club. No necesitas
             experiencia ni uniforme.
           </p>
           <dl className="mt-8 space-y-4 text-[15px] text-primary-foreground/85">
@@ -711,9 +712,18 @@ function Contact() {
           <div className="flex flex-col items-start justify-center space-y-6 text-primary-foreground">
             <div className="space-y-3">
               <p className="text-2xl font-bold">¡Gracias! Tu registro fue recibido.</p>
+              {codigo && (
+                <div className="border border-brand/60 bg-brand/10 p-5">
+                  <p className="text-xs uppercase tracking-[0.18em] text-primary-foreground/70">
+                    Tu código de inscripción
+                  </p>
+                  <p className="mt-1 font-display text-4xl tracking-widest text-brand">{codigo}</p>
+                </div>
+              )}
               <p className="text-primary-foreground/70">
-                El club confirmará la inscripción y te contactará pronto para coordinar tu primera
-                clase.
+                Anótalo o toma una captura. Entrégalo en el club al pagar tu inscripción: cuando
+                el pago se confirme, el club te entregará tu usuario y contraseña para seguir el
+                progreso del estudiante.
               </p>
             </div>
             <div className="flex flex-wrap gap-3">
@@ -865,27 +875,6 @@ function Contact() {
                 type="tel"
                 placeholder="300 000 0000"
                 autoComplete="tel"
-                required
-                className={inputClass}
-              />
-            </div>
-
-            <div>
-              <label
-                htmlFor="email"
-                className="text-xs uppercase tracking-[0.18em] text-primary-foreground/70"
-              >
-                Correo electrónico
-              </label>
-              <p className="mt-1 text-xs text-primary-foreground/60">
-                Para acceder al portal de seguimiento del estudiante.
-              </p>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                placeholder="correo@ejemplo.com"
-                autoComplete="email"
                 required
                 className={inputClass}
               />
