@@ -721,8 +721,8 @@ function Contact() {
                 </div>
               )}
               <p className="text-primary-foreground/70">
-                Anótalo o toma una captura. Entrégalo en el club al pagar tu inscripción: cuando
-                el pago se confirme, el club te entregará tu usuario y contraseña para seguir el
+                Anótalo o toma una captura. Entrégalo en el club al pagar tu inscripción: cuando el
+                pago se confirme, el club te entregará tu usuario y contraseña para seguir el
                 progreso del estudiante.
               </p>
             </div>
