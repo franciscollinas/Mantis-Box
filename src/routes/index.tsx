@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import kidsImg from "@/assets/program-wushu.jpeg";
 import fundamentalsImg from "@/assets/program-selfdefense.jpeg";
@@ -39,6 +39,7 @@ const SITE = {
   instagram: "https://www.instagram.com/mantisboxsabana/",
   tiktok: "https://www.tiktok.com/@mantisbox",
   facebook: "https://www.facebook.com/profile.php?id=61592859811892",
+  inscripcionApi: "https://wushu-app.vercel.app/api/inscripcion",
   // ⚠️ Reemplazar por el enlace directo de reseñas de tu ficha de Google.
   googleReview: "https://search.google.com/local/writereview?placeid=ChIJ16WuWZzf9Y4RdOVCyVuHgak",
   googleProfile: "https://www.google.com/search?q=Club+Mantis+Box+Sabanalarga",
@@ -600,6 +601,50 @@ function FinalCta() {
 }
 
 function Contact() {
+  const [estado, setEstado] = useState<"idle" | "enviando" | "ok" | "error">("idle");
+  const [mensajeError, setMensajeError] = useState("");
+  const [codigo, setCodigo] = useState("");
+
+  const enviar = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const form = e.currentTarget;
+    const formData = new FormData(form);
+    const website = (formData.get("website") as string) || "";
+    setEstado("enviando");
+    setMensajeError("");
+    try {
+      const res = await fetch(SITE.inscripcionApi, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          website,
+          estudiante: formData.get("estudiante"),
+          fecha_nacimiento: formData.get("fecha_nacimiento"),
+          genero: formData.get("genero"),
+          documento: formData.get("documento"),
+          peso_kg: formData.get("peso") || undefined,
+          nombre_acudiente: formData.get("nombre_acudiente"),
+          telefono: formData.get("telefono"),
+        }),
+      });
+      const cuerpo = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setMensajeError(cuerpo.error ?? "No se pudo enviar el registro.");
+        setEstado("error");
+        return;
+      }
+      setCodigo(typeof cuerpo.codigo === "string" ? cuerpo.codigo : "");
+      setEstado("ok");
+      form.reset();
+    } catch {
+      setMensajeError("No se pudo conectar con el servidor. Revisa tu conexión.");
+      setEstado("error");
+    }
+  };
+
+  const inputClass =
+    "mt-1 w-full border border-primary-foreground/20 bg-primary-foreground/5 px-4 py-3 text-sm text-primary-foreground outline-none focus:border-brand";
+
   return (
     <section id="contacto" className="fade-in-up section-pad bg-ink">
       <div className="mx-auto grid max-w-[1200px] gap-14 px-6 md:grid-cols-2">
@@ -608,8 +653,8 @@ function Contact() {
             Tu primera clase es <span className="text-brand">gratis</span>
           </h2>
           <p className="mt-5 max-w-md text-primary-foreground/70">
-            Escríbenos por WhatsApp y coordinamos tu clase de prueba. No necesitas experiencia ni
-            uniforme.
+            Regístrate y recibirás un código de inscripción para pagar en el club. No necesitas
+            experiencia ni uniforme.
           </p>
           <dl className="mt-8 space-y-4 text-[15px] text-primary-foreground/85">
             <div>
@@ -662,119 +707,204 @@ function Contact() {
             </div>
           </dl>
         </div>
-        <form
-          className="space-y-4"
-          onSubmit={(e) => {
-            e.preventDefault();
-            const data = new FormData(e.currentTarget);
-            const estudiante = data.get("estudiante") as string;
-            const edad = data.get("edad") as string;
-            const peso = data.get("peso") as string;
-            const cumple = data.get("cumple") as string;
-            const genero = data.get("genero") as string;
-            const documento = data.get("documento") as string;
-            const texto = [
-              "*Nuevo registro desde la web*",
-              "",
-              `Nombre del estudiante: ${estudiante}`,
-              `Edad: ${edad}`,
-              `Peso (kg): ${peso}`,
-              `Fecha de cumpleaños: ${cumple}`,
-              `Género: ${genero}`,
-              `Documento de identificación: ${documento}`,
-            ].join("\n");
-            window.open(`${SITE.whatsapp}?text=${encodeURIComponent(texto)}`, "_blank");
-          }}
-        >
-          {[
-            {
-              id: "estudiante",
-              label: "Nombre del estudiante",
-              type: "text",
-              placeholder: "Nombre completo",
-              autoComplete: "name",
-            },
-            { id: "edad", label: "Edad", type: "number", placeholder: "Edad", autoComplete: "off" },
-            {
-              id: "peso",
-              label: "Peso (kg)",
-              type: "number",
-              placeholder: "Peso en kilogramos",
-              autoComplete: "off",
-            },
-            {
-              id: "cumple",
-              label: "Fecha de cumpleaños",
-              type: "date",
-              placeholder: "dd/mm/aaaa",
-              autoComplete: "off",
-            },
-          ].map((f) => (
-            <div key={f.id}>
+
+        {estado === "ok" ? (
+          <div className="flex flex-col items-start justify-center space-y-6 text-primary-foreground">
+            <div className="space-y-3">
+              <p className="text-2xl font-bold">¡Gracias! Tu registro fue recibido.</p>
+              {codigo && (
+                <div className="border border-brand/60 bg-brand/10 p-5">
+                  <p className="text-xs uppercase tracking-[0.18em] text-primary-foreground/70">
+                    Tu código de inscripción
+                  </p>
+                  <p className="mt-1 font-display text-4xl tracking-widest text-brand">{codigo}</p>
+                </div>
+              )}
+              <p className="text-primary-foreground/70">
+                Anótalo o toma una captura. Entrégalo en el club al pagar tu inscripción: cuando el
+                pago se confirme, el club te entregará tu usuario y contraseña para seguir el
+                progreso del estudiante.
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-3">
+              <button
+                type="button"
+                onClick={() => setEstado("idle")}
+                className="inline-block bg-brand px-6 py-3 font-display text-sm tracking-wide text-brand-foreground transition-all duration-300 hover:opacity-90 hover:scale-[1.02]"
+              >
+                Registrar otro alumno
+              </button>
+              <a
+                href={SITE.whatsapp}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block border border-primary-foreground/20 px-6 py-3 font-display text-sm tracking-wide text-primary-foreground transition-all duration-300 hover:border-brand hover:text-brand"
+              >
+                ¿Dudas? Escríbenos
+              </a>
+            </div>
+          </div>
+        ) : (
+          <form className="space-y-4" onSubmit={enviar}>
+            <input
+              type="text"
+              name="website"
+              className="sr-only"
+              tabIndex={-1}
+              autoComplete="off"
+              aria-hidden
+            />
+
+            {[
+              {
+                id: "estudiante",
+                label: "Nombre del estudiante",
+                type: "text",
+                placeholder: "Nombre completo",
+                autoComplete: "name",
+              },
+              {
+                id: "fecha_nacimiento",
+                label: "Fecha de nacimiento",
+                type: "date",
+                placeholder: "dd/mm/aaaa",
+                autoComplete: "off",
+              },
+              {
+                id: "peso",
+                label: "Peso (kg)",
+                type: "number",
+                placeholder: "25",
+                autoComplete: "off",
+                min: 5,
+                max: 300,
+                step: 1,
+              },
+            ].map((f) => (
+              <div key={f.id}>
+                <label
+                  htmlFor={f.id}
+                  className="text-xs uppercase tracking-[0.18em] text-primary-foreground/70"
+                >
+                  {f.label}
+                </label>
+                <input
+                  id={f.id}
+                  name={f.id}
+                  type={f.type}
+                  placeholder={f.placeholder}
+                  autoComplete={f.autoComplete}
+                  required
+                  {...("min" in f ? { min: f.min, max: f.max, step: f.step } : {})}
+                  className={inputClass}
+                />
+              </div>
+            ))}
+
+            <div>
               <label
-                htmlFor={f.id}
+                htmlFor="genero"
                 className="text-xs uppercase tracking-[0.18em] text-primary-foreground/70"
               >
-                {f.label}
+                Género
               </label>
+              <select id="genero" name="genero" required className={inputClass}>
+                <option value="" disabled selected>
+                  Selecciona una opción
+                </option>
+                <option value="masculino">Masculino</option>
+                <option value="femenino">Femenino</option>
+                <option value="otro">Otro</option>
+              </select>
+            </div>
+
+            <div>
+              <label
+                htmlFor="documento"
+                className="text-xs uppercase tracking-[0.18em] text-primary-foreground/70"
+              >
+                Documento de identificación
+              </label>
+              <p className="mt-1 text-xs text-primary-foreground/60">
+                Registro civil, tarjeta de identidad o cédula.
+              </p>
               <input
-                id={f.id}
-                name={f.id}
-                type={f.type}
-                placeholder={f.placeholder}
-                autoComplete={f.autoComplete}
+                id="documento"
+                name="documento"
+                type="text"
+                placeholder="Número de documento"
                 required
-                className="mt-1 w-full border border-primary-foreground/20 bg-primary-foreground/5 px-4 py-3 text-sm text-primary-foreground outline-none focus:border-brand"
+                className={inputClass}
               />
             </div>
-          ))}
-          <div>
-            <label
-              htmlFor="genero"
-              className="text-xs uppercase tracking-[0.18em] text-primary-foreground/70"
+
+            <div className="pt-2">
+              <p className="text-xs uppercase tracking-[0.18em] text-primary-foreground/50">
+                Datos del acudiente / padre
+              </p>
+            </div>
+
+            <div>
+              <label
+                htmlFor="nombre_acudiente"
+                className="text-xs uppercase tracking-[0.18em] text-primary-foreground/70"
+              >
+                Nombre completo
+              </label>
+              <input
+                id="nombre_acudiente"
+                name="nombre_acudiente"
+                type="text"
+                placeholder="Nombre y apellidos"
+                autoComplete="name"
+                required
+                className={inputClass}
+              />
+            </div>
+
+            <div>
+              <label
+                htmlFor="telefono"
+                className="text-xs uppercase tracking-[0.18em] text-primary-foreground/70"
+              >
+                Teléfono / WhatsApp
+              </label>
+              <input
+                id="telefono"
+                name="telefono"
+                type="tel"
+                placeholder="300 000 0000"
+                autoComplete="tel"
+                required
+                className={inputClass}
+              />
+            </div>
+
+            {estado === "error" && (
+              <p className="rounded bg-brand/20 p-3 text-sm text-brand">{mensajeError}</p>
+            )}
+
+            <button
+              type="submit"
+              disabled={estado === "enviando"}
+              className="inline-block w-full bg-brand px-6 py-3 text-center font-display text-base tracking-wide text-brand-foreground transition-all duration-300 hover:opacity-90 hover:scale-[1.02] disabled:opacity-60"
             >
-              Género
-            </label>
-            <select
-              id="genero"
-              name="genero"
-              required
-              className="mt-1 w-full border border-primary-foreground/20 bg-primary-foreground/5 px-4 py-3 text-sm text-primary-foreground outline-none focus:border-brand"
-            >
-              <option value="" disabled selected>
-                Selecciona una opción
-              </option>
-              <option value="masculino">Masculino</option>
-              <option value="femenino">Femenino</option>
-              <option value="otro">Otro</option>
-            </select>
-          </div>
-          <div>
-            <label
-              htmlFor="documento"
-              className="text-xs uppercase tracking-[0.18em] text-primary-foreground/70"
-            >
-              Documento de identificación
-            </label>
-            <p className="mt-1 text-xs text-primary-foreground/60">
-              Registro civil, tarjeta de identidad o cédula.
+              {estado === "enviando" ? "Enviando…" : "Enviar inscripción"}
+            </button>
+
+            <p className="text-center text-xs text-primary-foreground/50">
+              O{" "}
+              <a
+                href={SITE.whatsapp}
+                className="underline hover:text-brand"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                escríbenos directo por WhatsApp
+              </a>
             </p>
-            <input
-              id="documento"
-              name="documento"
-              type="text"
-              placeholder="Número de documento"
-              required
-              className="mt-1 w-full border border-primary-foreground/20 bg-primary-foreground/5 px-4 py-3 text-sm text-primary-foreground outline-none focus:border-brand"
-            />
-          </div>
-          <button
-            type="submit"
-            className="inline-block w-full bg-brand px-6 py-3 text-center font-display text-base tracking-wide text-brand-foreground transition-all duration-300 hover:opacity-90 hover:scale-[1.02]"
-          >
-            Enviar por WhatsApp
-          </button>
-        </form>
+          </form>
+        )}
       </div>
     </section>
   );
