@@ -39,7 +39,7 @@ const SITE = {
   instagram: "https://www.instagram.com/mantisboxsabana/",
   tiktok: "https://www.tiktok.com/@mantisbox",
   facebook: "https://www.facebook.com/profile.php?id=61592859811892",
-  inscripcionApi: "https://mantis-box.vercel.app/api/inscripcion",
+  inscripcionApi: "https://wushu-app.vercel.app/api/inscripcion",
   // ⚠️ Reemplazar por el enlace directo de reseñas de tu ficha de Google.
   googleReview: "https://search.google.com/local/writereview?placeid=ChIJ16WuWZzf9Y4RdOVCyVuHgak",
   googleProfile: "https://www.google.com/search?q=Club+Mantis+Box+Sabanalarga",
